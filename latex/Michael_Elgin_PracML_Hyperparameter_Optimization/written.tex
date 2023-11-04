@@ -1,0 +1,245 @@
+\documentclass[12pt, letterpaper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{comment}
+\usepackage{caption} % for table captions
+
+\usepackage[shortlabels]{enumitem} % for (a) (b) (c) enumerate use [(a)] like so:
+%\begin{enumerate}[(a)]
+\usepackage{bm}%bold symbols in math mode
+\usepackage{amsmath}%allows text in math mode e.g. \text{}
+
+\usepackage{listings} % Typeset Python
+%Here is an example of how to do that
+%\begin{lstlisting}[language=Python, basicstyle=\tiny]
+%#Here is some test Python
+%def yay():
+%    print("hi")
+%\end{lstlisting}
+
+\usepackage{graphicx} % for images
+%\includegraphics{uploaded-file-name}
+
+\usepackage{float} % supposedly will allow the use of [H] for table and figure positioning
+
+\title{COSC 5010-03 Practical Machine Learning Fall 2023 Hyperparameter Optimization Report}
+\author{Michael Elgin}
+\date{October 31, 2023}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction} %What problem are you solving, how are you going to solve it.
+
+Various machine learning algorithms can not only be trained on data but also tuned based on hyperparameters they offer. This can improve a model's ability to generalize to new data. This exercise compares the performance of various algorithms as their hyperparameters are adjusted. The wine quality dataset\footnote{https://archive.ics.uci.edu/dataset/186/wine+quality} is used.
+
+\section{Dataset Description} %Describe the data you're using, e.g. how many features and observations, what are you predicting, any missing values, etc.
+
+The wine quality dataset is standard tabular data. There are 2 datasets for each color of red and white. Both contain 11 features, all of which are continuous. The target is a discrete value which is the assigned quality of the wine. For the regression tasks, the white wine dataset is used to evaluate models. For classification tasks, both datasets are concatenated, with the target being changed to be the color of the wine, with 0 being assigned to red and 1 to white.
+
+\section{Experimental Setup} %What specifically are you doing to solve the problem, i.e. what programming languages and libraries, how are you processing the data, what machine learning algorithms are you considering, how are you evaluating them, etc.
+
+All computation is done with the Python programming language. Scikit-learn is used to construct models. Pandas is used to load and preprocess the data..
+
+For regression, performance is the mean absolute percentage error, often graphed as its negative (then meaning more is better). This is defined by taking the difference between the predicted value of the model and the actual value, then dividing by the actual value. Then the mean of all of those is taken. More formally:
+
+$$
+    GE_{Regression\ model}(\hat{f}, \bm{X}_{test}, \bm{y}_{test}) = \frac{1}{|\bm{X}_{test}|} \sum_{i=1}^{|\bm{X}_{test}|} \frac{\hat{f}(\bm{X}_{test,i} - \bm{y}_{test,i}) \cdot 100}{\bm{X}_{test,i}}
+$$
+
+For classification, the performance metric is standard accuracy:
+
+$$
+    GE_{Classification\ model}(\hat{f}, \bm{X}_{test}, \bm{y}_{test}) = \frac{\sum_{i=1}^{|\bm{X}_{test}|}l_{0,1}(\hat{f}(\bm{X}_{test,i}), \bm{y}_{test,i})}{|\bm{X}_{test}|}
+$$
+
+$$
+Acc_{Classification\ model} = (1 - GE_{Classification\ model}) * 100
+$$
+
+For all models, grid-search is used for trying hyperparameter configurations. For hyperparameters that are continuous in nature, the grid is exponential in fashion, meaning exponents for $2^x$ are tried. This allows for a much wider exploration of the hyperparameter space given realistic time constraints, since adjusting hyperparameters in a linear fashion would space all configurations too closely together.
+
+The first section is regression models. Model 1 is a decision tree. The hyperparameters considered for this are max depth for the tree and minimum samples required for a split. All hyperparameters explored can only have positive numbers. The minimum amount of samples must be 2, hence the first exponent starts at 1.
+
+$$
+\text{max depth} = 2^x, x \in [0,7]
+$$
+
+$$
+\text{min samples} = 2^x, x \in [1,15]
+$$
+
+The second model is a random forest, which uses the same hyperparamters as the tree but also adds in the third hyperparameter of the amount of trees in the forest.
+
+$$
+\text{max depth} = 2^x, x \in [0,4]
+$$
+
+$$
+\text{min samples} = 2^x, x \in [1,4]
+$$
+
+$$
+\text{number of trees} = 2^x, x \in [0,7]
+$$
+
+The second section is classification models. Model 1 is a support vector classifier. Its first hyperparmeter is ``C", which is inverse regularization strength. The second hyperparameter is the kernel type, which is either poly (polynomial) or rbf (radial basis function).
+
+$$
+\text{C} = 2^x, x \in [0,15]
+$$
+
+$$
+\text{kernel type} \in \{\text{poly, rbf}\}
+$$
+
+Model 2 is logistic regression, which uses the following hyperparameter settings.
+
+$$
+\text{C} = 2^x, x \in [0,8]
+$$
+
+$$
+\text{penalty type} \in \{\text{l1, l2}\}
+$$
+
+Model 3 is a decision tree classifier, which uses the same hyperparmeter settings as in regularization.
+
+$$
+\text{max depth} = 2^x, x \in [0,7]
+$$
+
+$$
+\text{min samples} = 2^x, x \in [1,15]
+$$
+
+Model 4 is a K-nearest neighbor classifier, whose hyperparameters are the amount of neighbors to consider and the distance metric.
+
+$$
+\text{number of neighbors} = 2^x, x \in [0,7]
+$$
+
+$$
+\text{distance metric} \in \{\text{l1, l2}\}
+$$
+
+Model 5 is a random forest classifier, which uses the same hyperparameters as in regression.
+
+$$
+\text{max depth} = 2^x, x \in [0,4]
+$$
+
+$$
+\text{min samples} = 2^x, x \in [1,4]
+$$
+
+$$
+\text{number of trees} = 2^x, x \in [0,7]
+$$
+
+\section{Results} %Description of what you observed, including plots.
+
+\subsection{Plots of hyperparameter averages}
+
+\newcommand{\myscale}{0.4}
+
+Plots for Decision Tree Regressor hyperparameters:
+
+\includegraphics[scale=\myscale]{decision_tree_regressor_Max Depth.png}
+
+\includegraphics[scale=\myscale]{decision_tree_regressor_Min Samples for Split.png}
+
+Plots for Random Forest Regressor hyperparameters:
+
+\includegraphics[scale=\myscale]{random_forest_regressor_Max Depth.png}
+
+\includegraphics[scale=\myscale]{random_forest_regressor_Min Samples for Split.png}
+
+\includegraphics[scale=\myscale]{random_forest_regressor_Number of Trees.png}
+
+Plots for Support Vector Classifier hyperparameters:
+
+\includegraphics[scale=\myscale]{svc_C Value.png}
+
+\includegraphics[scale=\myscale]{svc_Kernel Type.png}
+
+Plots for Logistic Regression hyperparameters:
+
+\includegraphics[scale=\myscale]{logistic_regression_C Value.png}
+
+\includegraphics[scale=\myscale]{logistic_regression_Penalty Type.png}
+
+Plots for K-Nearest Neighbor hyperparameters:
+
+\includegraphics[scale=\myscale]{knn_Number of Neighbors.png}
+
+\includegraphics[scale=\myscale]{knn_Metric.png}
+
+Plots for Decision Tree Classifier:
+
+\includegraphics[scale=\myscale]{decision_tree_classifier_Max Depth.png}
+
+\includegraphics[scale=\myscale]{decision_tree_classifier_Min Samples for Split.png}
+
+Plots for Random Forest Classifier:
+
+\includegraphics[scale=\myscale]{random_forest_classifier_Max Depth.png}
+
+\includegraphics[scale=\myscale]{random_forest_classifier_Min Samples for Split.png}
+
+\includegraphics[scale=\myscale]{random_forest_classifier_Number of Trees.png}
+
+\subsection{Tables of best hyperparameters}
+
+The following tables show the best configurations found from grid-search. These do not always match the best points on the plots of the averages because occasionally the combination of several hyperparameter settings that weren't optimal on average can still be the best when working together.
+
+\begin{table}[H]
+\centering
+\caption{Regression models' best hyperparameters}
+\label{reg_table}
+\begin{tabular}{c|c|c|c} % l for left-aligned column, c for centered columns
+                & Max Depth     & Min Samples for Split & Number of Trees \\ \hline
+Decision Tree   & 8             & 512                   &   \\
+Random Forest   & 8             & 8                     & 64 \\
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Classification models' best hyperparameters}
+\label{cls_table 1}
+\begin{tabular}{c|c|c|c} % l for left-aligned column, c for centered columns
+                            & C         & Kernel Type   & Penalty Type \\ \hline
+Support Vector Classifier   & 16348     & rbf \\
+Logistic Regression         & 64        &               & l2 \\
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Classification models' best hyperparameters}
+\label{cls_table 2}
+\begin{tabular}{c|c|c|c} % l for left-aligned column, c for centered columns
+                & Number of Neighbors & Distance Metric\\ \hline
+K-Nearest Neighbor & 8 & l1 \\
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Classification models' best hyperparameters}
+\label{cls_table 3}
+\begin{tabular}{c|c|c|c} % l for left-aligned column, c for centered columns
+                & Max Depth     & Min Samples for Split     & Number of Trees \\ \hline
+Decision Tree   & 32 & 2 \\
+Random Forest   & 8 & 8 & 64 \\
+\end{tabular}
+\end{table}
+
+\section{Code} %Add the code you've used as a separate file.
+
+The associated code is in HPO.ipynb
+
+\end{document}
