@@ -61,6 +61,8 @@ $$
 
 For all models, grid-search is used for trying hyperparameter configurations. For hyperparameters that are continuous in nature, the grid is exponential in fashion, meaning exponents for $2^x$ are tried. This allows for a much wider exploration of the hyperparameter space given realistic time constraints, since adjusting hyperparameters in a linear fashion would space all configurations too closely together.
 
+Grid search does not use nested resampling. For each hyperparameter config tested, it gathers the score at each cross validation split and as well as the average of those scores. When hyperparameter values are judged here in this report, it is based on the average of the averages of all times they were used. For example, if hypothetical hyperparameter $x = a$ (along with other hyperparameters and their values) is being evaluated, it is cross validated to produce one average, and then the true performance of value $a$ is considered as the average of all the average scores whenever $x$ was $a$ even as other hyperparameter values were different.
+
 The first section is regression models. Model 1 is a decision tree. The hyperparameters considered for this are max depth for the tree and minimum samples required for a split. All hyperparameters explored can only have positive numbers. The minimum amount of samples must be 2, hence the first exponent starts at 1.
 
 $$
@@ -191,9 +193,23 @@ Plots for Random Forest Classifier:
 
 \includegraphics[scale=\myscale]{random_forest_classifier_Number of Trees.png}
 
+Combination plots follow\footnote{
+Note that the time cost of grid-search kept more values from being explored.
+}.
+
+\includegraphics[scale=\myscale]{combo_C.png}
+
+\includegraphics[scale=\myscale]{combo_max_depth.png}
+
+\includegraphics[scale=\myscale]{combo_min_samples_split.png}
+
+\includegraphics[scale=\myscale]{combo_n_estimators.png}
+
+For some hyperparameters, similar trajectories were observed between models. For others there was no reliable pattern across the space of values.
+
 \subsection{Tables of best hyperparameters}
 
-The following tables show the best configurations found from grid-search. These do not always match the best points on the plots of the averages because occasionally the combination of several hyperparameter settings that weren't optimal on average can still be the best when working together.
+The following tables show the best configurations found from grid-search. These do not always match the best points on the plots of the averages because occasionally the combination of several hyperparameter settings that weren't optimal on average can still be the best when working together. The first value is from grid-search, the second is from Bayesian optimization. Note that results from runs of Bayesian optimization may vary if the random\_state seed is changed from 0.
 
 \begin{table}[H]
 \centering
@@ -201,8 +217,8 @@ The following tables show the best configurations found from grid-search. These 
 \label{reg_table}
 \begin{tabular}{c|c|c|c} % l for left-aligned column, c for centered columns
                 & Max Depth     & Min Samples for Split & Number of Trees \\ \hline
-Decision Tree   & 8             & 512                   &   \\
-Random Forest   & 8             & 8                     & 64 \\
+Decision Tree   & 8, 44            & 512, 582                  &   \\
+Random Forest   & 8, 8             & 8, 8                    & 64, 58 \\
 \end{tabular}
 \end{table}
 
@@ -212,8 +228,8 @@ Random Forest   & 8             & 8                     & 64 \\
 \label{cls_table 1}
 \begin{tabular}{c|c|c|c} % l for left-aligned column, c for centered columns
                             & C         & Kernel Type   & Penalty Type \\ \hline
-Support Vector Classifier   & 16348     & rbf \\
-Logistic Regression         & 64        &               & l2 \\
+Support Vector Classifier   & 16348, 8700     & rbf, rbf \\
+Logistic Regression         & 64, 68        &               & l2, l2 \\
 \end{tabular}
 \end{table}
 
@@ -223,7 +239,7 @@ Logistic Regression         & 64        &               & l2 \\
 \label{cls_table 2}
 \begin{tabular}{c|c|c|c} % l for left-aligned column, c for centered columns
                 & Number of Neighbors & Distance Metric\\ \hline
-K-Nearest Neighbor & 8 & l1 \\
+K-Nearest Neighbor & 8, 47 & l1, l1 \\
 \end{tabular}
 \end{table}
 
@@ -233,8 +249,8 @@ K-Nearest Neighbor & 8 & l1 \\
 \label{cls_table 3}
 \begin{tabular}{c|c|c|c} % l for left-aligned column, c for centered columns
                 & Max Depth     & Min Samples for Split     & Number of Trees \\ \hline
-Decision Tree   & 32 & 2 \\
-Random Forest   & 8 & 8 & 64 \\
+Decision Tree   & 32, 17 & 2, 1343 \\
+Random Forest   & 8, 8 & 2, 8 & 32, 58 \\
 \end{tabular}
 \end{table}
 
