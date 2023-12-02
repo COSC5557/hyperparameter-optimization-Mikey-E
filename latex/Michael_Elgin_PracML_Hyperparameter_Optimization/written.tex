@@ -63,7 +63,7 @@ For all models, grid-search is used for trying hyperparameter configurations. Fo
 
 Grid search does not use nested resampling. For each hyperparameter config tested, it gathers the score at each cross validation split and as well as the average of those scores. When hyperparameter values are judged here in this report, it is based on the average of the averages of all times they were used. For example, if hypothetical hyperparameter $x = a$ (along with other hyperparameters and their values) is being evaluated, it is cross validated to produce one average, and then the true performance of value $a$ is considered as the average of all the average scores whenever $x$ was $a$ even as other hyperparameter values were different.
 
-The Bayesian optimization by itself does not use nested resampling. It uses a default of 3-fold inner cross-validation. As an additional layer to do nested resampling, 3-fold outer cross-validation wraps this process, and the average of those scores is reported in table \ref{perf_measures}.
+The Bayesian optimization by itself does not use nested resampling. It uses a default of 3-fold inner cross-validation. As an additional layer to do nested resampling, 3-fold outer cross-validation wraps this process, and the average of those scores is reported in table \ref{perf_measures_cls}.
 
 The first section is regression models. Model 1 is a decision tree. The hyperparameters considered for this are max depth for the tree and minimum samples required for a split. All hyperparameters explored can only have positive numbers. The minimum amount of samples must be 2, hence the first exponent starts at 1.
 
@@ -211,7 +211,7 @@ For some hyperparameters, similar trajectories were observed between models. For
 
 \subsection{Tables of best hyperparameters}
 
-The following tables show the best configurations found from grid-search. These do not always match the best points on the plots of the averages because occasionally the combination of several hyperparameter settings that weren't optimal on average can still be the best when working together. The first value is from grid-search, the second is from Bayesian optimization. Note that results from runs of Bayesian optimization may vary if the random\_state seed is changed from 0.
+The following tables show the best configurations found from grid-search, and Bayes-search. These do not always match the highest points on the plots of the averages because the table reports the best \emph{combination} of hyperparameters from grid-search. The first value is from grid-search, prefixed by ``G:", and the second is from Bayesian optimization, prefixed by ``B:". Note that results from runs of Bayesian optimization may vary if the random\_state seed is changed from 0.
 
 \begin{table}[H]
 \centering
@@ -219,8 +219,8 @@ The following tables show the best configurations found from grid-search. These 
 \label{reg_table}
 \begin{tabular}{c|c|c|c} % l for left-aligned column, c for centered columns
                 & Max Depth     & Min Samples for Split & Number of Trees \\ \hline
-Decision Tree   & 8, 44            & 512, 582                  &   \\
-Random Forest   & 8, 8             & 8, 8                    & 64, 58 \\
+Decision Tree   & G:8, B:44            & G:512, B:582                  &   \\
+Random Forest   & G:8, B:8             & G:8, B:8                    & G:64, B:58 \\
 \end{tabular}
 \end{table}
 
@@ -230,8 +230,8 @@ Random Forest   & 8, 8             & 8, 8                    & 64, 58 \\
 \label{cls_table 1}
 \begin{tabular}{c|c|c|c} % l for left-aligned column, c for centered columns
                             & C         & Kernel Type   & Penalty Type \\ \hline
-Support Vector Classifier   & 16348, 15846     & rbf, rbf \\
-Logistic Regression         & 64, 81        &               & l2, l2 \\
+Support Vector Classifier   & G:16348, B:15846     & G:rbf, B:rbf \\
+Logistic Regression         & G:64, B:81        &               & G:l2, B:l2 \\
 \end{tabular}
 \end{table}
 
@@ -241,7 +241,7 @@ Logistic Regression         & 64, 81        &               & l2, l2 \\
 \label{cls_table 2}
 \begin{tabular}{c|c|c|c} % l for left-aligned column, c for centered columns
                 & Number of Neighbors & Distance Metric\\ \hline
-K-Nearest Neighbor & 8, 10 & l1, l1 \\
+K-Nearest Neighbor & G:8, B:10 & G:l1, B:l1 \\
 \end{tabular}
 \end{table}
 
@@ -251,21 +251,34 @@ K-Nearest Neighbor & 8, 10 & l1, l1 \\
 \label{cls_table 3}
 \begin{tabular}{c|c|c|c} % l for left-aligned column, c for centered columns
                 & Max Depth     & Min Samples for Split     & Number of Trees \\ \hline
-Decision Tree   & 32, 58 & 2, 2 \\
-Random Forest   & 8, 8 & 2, 8 & 32, 54 \\
+Decision Tree   & G:32, B:58 & G:2, B:2 \\
+Random Forest   & G:8, B:8 & G:2, B:8 & G:32, B:54 \\
 \end{tabular}
 \end{table}
 
-\subsection{Table of performance measures for grid-search and Bayesian optimization}
+\subsection{Tables of performance measures for grid-search and Bayesian optimization}
+
+Table \ref{perf_measures_reg} compares the best found $GE_{Regression\ model}$ for the regression models.
 
 \begin{table}[H]
 \centering
-\caption{Performance comparison for grid-search and Bayesian optimization}
-\label{perf_measures}
+\caption{Regression MAPE comparison for grid-search and Bayesian optimization (less is better)}
+\label{perf_measures_reg}
 \begin{tabular}{c|c|c} % l for left-aligned column, c for centered columns
                             & Grid Search     & Bayesian Optimization  \\ \hline
-Decision Tree Regressor     & -0.1070 & -0.1035 \\
-Random Forest Regressor     & -0.1014 & -0.0946\\
+Decision Tree Regressor     & 10.70\% & 10.35\% \\
+Random Forest Regressor     & 10.14\% & 9.46\%\\
+\end{tabular}
+\end{table}
+
+Table \ref{perf_measures_cls} compares the best found $Acc_{Classification\ model}$ for the classification models.
+
+\begin{table}[H]
+\centering
+\caption{Classification accuracy comparison for grid-search and Bayesian optimization (more is better)}
+\label{perf_measures_cls}
+\begin{tabular}{c|c|c} % l for left-aligned column, c for centered columns
+                            & Grid Search     & Bayesian Optimization  \\ \hline
 Support Vector Classifier   & 98.815\% & 98.876\%\\
 Logistic Regression         & 98.815\% & 98.784\%\\
 K-Nearest Neighbors         & 94.582\% & 94.875\%\\
@@ -274,7 +287,7 @@ Random Forest Classifier    & 99.338\% & 99.369\%\\
 \end{tabular}
 \end{table}
 
-Based on the table, it is not clear whether grid-search or Bayesian optimization is ``better" than the other. There were some cases where each produced a final model that had slightly better performance than the other. In all cases, the differences were trivial.
+Based on the tables, it is not clear whether grid-search or Bayesian optimization is ``better" than the other. Although in almost all cases Bayesian optimization was better, there was one case where grid-search produced a final model that had slightly better performance than Bayesian optimization did. In all cases, the differences were trivial.
 
 \section{Code} %Add the code you've used as a separate file.
 
