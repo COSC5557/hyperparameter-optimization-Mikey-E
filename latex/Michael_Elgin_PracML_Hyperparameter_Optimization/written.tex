@@ -143,6 +143,22 @@ $$
 
 For each model, Bayesian optimization will be given the same budget (the same amount of hyperparameter configurations to try) as was had for grid-search.
 
+\begin{table}[H]
+\centering
+\caption{Search budgets for each model type}
+\label{budget_table}
+\begin{tabular}{c|c} % l for left-aligned column, c for centered columns
+Model & Budget\\ \hline
+Decision Tree Regressor & 98\\
+Random Forest Regressor & 84\\
+Support Vector Classifier & 30\\
+Logistic Regression & 16\\
+K-Nearest Neighbors & 14\\
+Decision Tree Classifier & 98\\
+Random Forest Classifier & 84\\
+\end{tabular}
+\end{table}
+
 \section{Results} %Description of what you observed, including plots.
 
 \subsection{Tables of best hyperparameters}
@@ -200,10 +216,10 @@ Table \ref{perf_measures_reg} compares the best found $GE_{Regression\ model}$ f
 \centering
 \caption{Regression MAPE comparison for grid-search and Bayesian optimization (less is better)}
 \label{perf_measures_reg}
-\begin{tabular}{c|c|c|c} % l for left-aligned column, c for centered columns
-                            & Grid Search     & Bayesian Optimization & Budget (iterations) \\ \hline
-Decision Tree Regressor     & 10.70\% & 10.34\% & 98\\
-Random Forest Regressor     & 10.14\% & 9.47\% & 84\\
+\begin{tabular}{c|c|c} % l for left-aligned column, c for centered columns
+                            & Grid Search & Bayesian Optimization\\ \hline
+Decision Tree Regressor     & 10.70\% & 10.34\%\\
+Random Forest Regressor     & 10.14\% & 9.47\%\\
 \end{tabular}
 \end{table}
 
@@ -213,13 +229,13 @@ Table \ref{perf_measures_cls} compares the best found $Acc_{Classification\ mode
 \centering
 \caption{Classification accuracy comparison for grid-search and Bayesian optimization (more is better)}
 \label{perf_measures_cls}
-\begin{tabular}{c|c|c|c} % l for left-aligned column, c for centered columns
-                            & Grid Search     & Bayesian Optimization & Budget (iterations) \\ \hline
-Support Vector Classifier   & 98.815\% & 98.861\% & 30\\
-Logistic Regression         & 98.815\% & 98.846\% & 16\\
-K-Nearest Neighbors         & 94.582\% & 94.844\% & 14\\
-Decision Tree Classifier    & 98.107\% & 98.199\% & 98\\
-Random Forest Classifier    & 99.338\% & 99.369\% & 84\\
+\begin{tabular}{c|c|c} % l for left-aligned column, c for centered columns
+                            & Grid Search & Bayesian Optimization\\\hline
+Support Vector Classifier   & 98.815\% & 98.861\%\\
+Logistic Regression         & 98.815\% & 98.846\%\\
+K-Nearest Neighbors         & 94.582\% & 94.844\%\\
+Decision Tree Classifier    & 98.107\% & 98.199\%\\
+Random Forest Classifier    & 99.338\% & 99.369\%\\
 \end{tabular}
 \end{table}
 
