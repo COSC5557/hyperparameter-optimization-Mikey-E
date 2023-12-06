@@ -141,6 +141,8 @@ $$
 \text{number of trees} = 2^x, x \in [0,7]
 $$
 
+For each model, Bayesian optimization will be given the same budget (the same amount of hyperparameter configurations to try) as was had for grid-search.
+
 \section{Results} %Description of what you observed, including plots.
 
 \subsection{Tables of best hyperparameters}
@@ -164,8 +166,8 @@ Random Forest   & G:8, B:8             & G:8, B:8                    & G:64, B:5
 \label{cls_table 1}
 \begin{tabular}{c|c|c|c} % l for left-aligned column, c for centered columns
                             & C         & Kernel Type   & Penalty Type \\ \hline
-Support Vector Classifier   & G:16348, B:15846     & G:rbf, B:rbf \\
-Logistic Regression         & G:64, B:81        &               & G:l2, B:l2 \\
+Support Vector Classifier   & G:16384, B:16384     & G:rbf, B:rbf \\
+Logistic Regression         & G:64, B:107        &               & G:l2, B:l2 \\
 \end{tabular}
 \end{table}
 
@@ -175,7 +177,7 @@ Logistic Regression         & G:64, B:81        &               & G:l2, B:l2 \\
 \label{cls_table 2}
 \begin{tabular}{c|c|c|c} % l for left-aligned column, c for centered columns
                 & Number of Neighbors & Distance Metric\\ \hline
-K-Nearest Neighbor & G:8, B:10 & G:l1, B:l1 \\
+K-Nearest Neighbor & G:8, B:12 & G:l1, B:l1 \\
 \end{tabular}
 \end{table}
 
@@ -186,7 +188,7 @@ K-Nearest Neighbor & G:8, B:10 & G:l1, B:l1 \\
 \begin{tabular}{c|c|c|c} % l for left-aligned column, c for centered columns
                 & Max Depth     & Min Samples for Split     & Number of Trees \\ \hline
 Decision Tree   & G:32, B:58 & G:2, B:2 \\
-Random Forest   & G:8, B:8 & G:2, B:8 & G:32, B:54 \\
+Random Forest   & G:8, B:7 & G:2, B:8 & G:32, B:64 \\
 \end{tabular}
 \end{table}
 
@@ -198,10 +200,10 @@ Table \ref{perf_measures_reg} compares the best found $GE_{Regression\ model}$ f
 \centering
 \caption{Regression MAPE comparison for grid-search and Bayesian optimization (less is better)}
 \label{perf_measures_reg}
-\begin{tabular}{c|c|c} % l for left-aligned column, c for centered columns
-                            & Grid Search     & Bayesian Optimization  \\ \hline
-Decision Tree Regressor     & 10.70\% & 10.35\% \\
-Random Forest Regressor     & 10.14\% & 9.46\%\\
+\begin{tabular}{c|c|c|c} % l for left-aligned column, c for centered columns
+                            & Grid Search     & Bayesian Optimization & Budget (iterations) \\ \hline
+Decision Tree Regressor     & 10.70\% & 10.34\% & 98\\
+Random Forest Regressor     & 10.14\% & 9.47\% & 84\\
 \end{tabular}
 \end{table}
 
@@ -211,17 +213,17 @@ Table \ref{perf_measures_cls} compares the best found $Acc_{Classification\ mode
 \centering
 \caption{Classification accuracy comparison for grid-search and Bayesian optimization (more is better)}
 \label{perf_measures_cls}
-\begin{tabular}{c|c|c} % l for left-aligned column, c for centered columns
-                            & Grid Search     & Bayesian Optimization  \\ \hline
-Support Vector Classifier   & 98.815\% & 98.876\%\\
-Logistic Regression         & 98.815\% & 98.784\%\\
-K-Nearest Neighbors         & 94.582\% & 94.875\%\\
-Decision Tree Classifier    & 98.107\% & 98.306\%\\
-Random Forest Classifier    & 99.338\% & 99.369\%\\
+\begin{tabular}{c|c|c|c} % l for left-aligned column, c for centered columns
+                            & Grid Search     & Bayesian Optimization & Budget (iterations) \\ \hline
+Support Vector Classifier   & 98.815\% & 98.861\% & 30\\
+Logistic Regression         & 98.815\% & 98.846\% & 16\\
+K-Nearest Neighbors         & 94.582\% & 94.844\% & 14\\
+Decision Tree Classifier    & 98.107\% & 98.199\% & 98\\
+Random Forest Classifier    & 99.338\% & 99.369\% & 84\\
 \end{tabular}
 \end{table}
 
-Based on the tables, it is not clear whether grid-search or Bayesian optimization is ``better" than the other. Although in almost all cases Bayesian optimization was better, there was one case where grid-search produced a final model that had slightly better performance than Bayesian optimization did. In all cases, the differences were trivial.
+Based on the tables, it is not clear whether grid-search or Bayesian optimization is ``better" than the other. Although in all cases Bayesian optimization got a better number, the differences were trivial.
 
 \section{Code} %Add the code you've used as a separate file.
 
